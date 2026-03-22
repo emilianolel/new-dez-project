@@ -9,11 +9,21 @@ resource "google_service_account" "composer_worker" {
   project      = var.project_id
 }
 
-# La SA de Composer necesita el rol de worker para ejecutar DAGs
-resource "google_project_iam_member" "composer_worker_role" {
-  project = var.project_id
-  role    = "roles/composer.worker"
-  member  = "serviceAccount:${google_service_account.composer_worker.email}"
+# Los roles mínimos para que Composer 2 funcione y pase los health checks
+locals {
+  composer_worker_roles = [
+    "roles/composer.worker",
+    "roles/logging.logWriter",
+    "roles/monitoring.metricWriter",
+    "roles/storage.objectViewer", # Necesario para leer imágenes de GCR/Artifact Registry
+  ]
+}
+
+resource "google_project_iam_member" "composer_worker_roles" {
+  for_each = toset(local.composer_worker_roles)
+  project  = var.project_id
+  role     = each.value
+  member   = "serviceAccount:${google_service_account.composer_worker.email}"
 }
 
 # Permiso adicional: composer.ServiceAgent (necesario para que Composer gestione recursos)

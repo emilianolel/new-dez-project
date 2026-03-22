@@ -39,3 +39,26 @@ resource "google_compute_firewall" "internal" {
 
   source_ranges = [var.subnet_cidr]
 }
+
+# Router para Cloud NAT
+resource "google_compute_router" "router" {
+  name    = "${var.env}-router"
+  project = var.project_id
+  region  = var.region
+  network = google_compute_network.vpc.id
+}
+
+# Cloud NAT: permite que nodos en subredes privadas salgan a internet (necesario para GKE/Composer)
+resource "google_compute_router_nat" "nat" {
+  name                               = "${var.env}-nat"
+  project                            = var.project_id
+  router                             = google_compute_router.router.name
+  region                             = var.region
+  nat_ip_allocate_option             = "AUTO_ONLY"
+  source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
+
+  log_config {
+    enable = true
+    filter = "ERRORS_ONLY"
+  }
+}
