@@ -4,10 +4,13 @@
 ###############################################################################
 
 module "networking" {
-  source     = "../../modules/networking"
-  project_id = var.project_id
-  region     = var.region
-  env        = var.env
+  source        = "../../modules/networking"
+  project_id    = var.project_id
+  region        = var.region
+  env           = var.env
+  subnet_cidr   = var.subnet_cidr
+  pods_cidr     = var.pods_cidr
+  services_cidr = var.services_cidr
 }
 
 module "iam" {
@@ -64,10 +67,11 @@ module "dataflow" {
 }
 
 module "composer" {
-  source         = "../../modules/composer"
-  project_id     = var.project_id
-  region         = var.region
-  env            = var.env
-  vpc_network    = module.networking.vpc_network
-  vpc_subnetwork = module.networking.vpc_subnetwork
+  source           = "../../modules/composer"
+  project_id       = var.project_id
+  region           = var.region
+  env              = var.env
+  vpc_network      = module.networking.vpc_network
+  vpc_subnetwork   = module.networking.vpc_subnetwork
+  master_ipv4_cidr = var.composer_master_cidr
 }

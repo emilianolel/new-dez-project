@@ -46,6 +46,16 @@ resource "google_composer_environment" "main" {
       network         = var.vpc_network
       subnetwork      = var.vpc_subnetwork
       service_account = google_service_account.composer_worker.email
+
+      ip_allocation_policy {
+        cluster_secondary_range_name  = var.pod_range_name
+        services_secondary_range_name = var.service_range_name
+      }
+    }
+
+    private_environment_config {
+      enable_private_endpoint = true
+      master_ipv4_cidr_block  = var.master_ipv4_cidr
     }
 
     environment_size = var.env == "prod" ? "ENVIRONMENT_SIZE_MEDIUM" : "ENVIRONMENT_SIZE_SMALL"

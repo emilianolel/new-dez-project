@@ -14,7 +14,16 @@ variable "env" {
 }
 
 variable "subnet_cidr" {
-  description = "CIDR de la subnet principal"
+  description = "Rango de IP para la subred principal"
   type        = string
-  default     = "10.0.0.0/24"
+}
+
+variable "pods_cidr" {
+  description = "Rango de IP secundario para los Pods de GKE"
+  type        = string
+}
+
+variable "services_cidr" {
+  description = "Rango de IP secundario para los Servicios de GKE"
+  type        = string
 }
