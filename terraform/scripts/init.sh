@@ -38,7 +38,20 @@ echo ""
 # ── PASO 1: Autenticación ────────────────────────────────────────────────────
 echo "📋 PASO 1: Autenticando con tu cuenta personal..."
 echo "   (Necesario solo para el bootstrap inicial)"
-gcloud auth application-default login --quiet || true
+
+# Verifica si ya hay una cuenta activa en gcloud
+ACTIVE_ACCOUNT="$(gcloud config get-value account 2>/dev/null || true)"
+if [[ -z "${ACTIVE_ACCOUNT}" || "${ACTIVE_ACCOUNT}" == "(unset)" ]]; then
+  echo "   No hay sesión activa. Abriendo login en el navegador..."
+  gcloud auth login
+else
+  echo "   Sesión existente detectada: ${ACTIVE_ACCOUNT}"
+fi
+
+# Application Default Credentials (necesario para Terraform)
+echo "   Configurando Application Default Credentials..."
+gcloud auth application-default login
+
 gcloud config set project "${PROJECT_ID}"
 echo "   ✅ Autenticado como: $(gcloud config get-value account)"
 
