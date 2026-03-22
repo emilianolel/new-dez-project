@@ -42,7 +42,7 @@ locals {
     "roles/artifactregistry.admin",
     "roles/iam.serviceAccountAdmin",
     "roles/iam.serviceAccountTokenCreator",
-    "roles/compute.networkAdmin",
+    "roles/compute.admin",
     "roles/secretmanager.admin",
     "roles/serviceusage.serviceUsageAdmin",
     "roles/resourcemanager.projectIamAdmin",

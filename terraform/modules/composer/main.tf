@@ -2,6 +2,23 @@
 # Módulo: Cloud Composer — Entorno de Apache Airflow gestionado
 ###############################################################################
 
+# Service Account dedicada para el entorno de Composer (Requisito de Composer 2)
+resource "google_service_account" "composer_worker" {
+  account_id   = "${var.env}-composer-worker"
+  display_name = "Composer Worker SA — ${var.env}"
+  project      = var.project_id
+}
+
+# La SA de Composer necesita el rol de worker para ejecutar DAGs
+resource "google_project_iam_member" "composer_worker_role" {
+  project = var.project_id
+  role    = "roles/composer.worker"
+  member  = "serviceAccount:${google_service_account.composer_worker.email}"
+}
+
+# Permiso adicional: composer.ServiceAgent (necesario para que Composer gestione recursos)
+# Nota: GCP suele crearlo automáticamente, pero es mejor asegurar roles básicos.
+
 resource "google_composer_environment" "main" {
   name    = "${var.env}-composer"
   region  = var.region
@@ -16,8 +33,9 @@ resource "google_composer_environment" "main" {
     }
 
     node_config {
-      network    = var.vpc_network
-      subnetwork = var.vpc_subnetwork
+      network         = var.vpc_network
+      subnetwork      = var.vpc_subnetwork
+      service_account = google_service_account.composer_worker.email
     }
 
     environment_size = var.env == "prod" ? "ENVIRONMENT_SIZE_MEDIUM" : "ENVIRONMENT_SIZE_SMALL"
