@@ -1,6 +1,6 @@
 terraform {
   backend "gcs" {
-    bucket = "REPLACE_WITH_YOUR_TERRAFORM_STATE_BUCKET"
+    bucket = "my-tf-state-dnqxxt-bucket"
     prefix = "terraform/environments/dev"
   }
 
