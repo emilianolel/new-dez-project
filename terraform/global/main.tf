@@ -17,6 +17,21 @@ resource "google_project_service" "apis" {
   disable_on_destroy         = false
 }
 
+# Obtiene datos del proyecto actual (como el ID numérico)
+data "google_project" "project" {
+  project_id = local.project_id
+}
+
+# Cloud Composer 2 requiere un permiso especial para su Service Agent gestionado por Google
+# Este rol permite al agente gestionar las SAs de los nodos del entorno Composer.
+resource "google_project_iam_member" "composer_agent_v2_ext" {
+  project = local.project_id
+  role    = "roles/composer.ServiceAgentV2Ext"
+  member  = "serviceAccount:service-${data.google_project.project.number}@cloudcomposer-accounts.iam.gserviceaccount.com"
+
+  depends_on = [google_project_service.apis]
+}
+
 ###############################################################################
 # Service Account de administración de Terraform
 # Esta SA reemplaza el uso de cuentas personales para gestionar la infra.
