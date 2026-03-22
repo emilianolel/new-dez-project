@@ -64,8 +64,10 @@ module "dataflow" {
 }
 
 module "composer" {
-  source     = "../../modules/composer"
-  project_id = var.project_id
-  region     = var.region
-  env        = var.env
+  source         = "../../modules/composer"
+  project_id     = var.project_id
+  region         = var.region
+  env            = var.env
+  vpc_network    = module.networking.vpc_network
+  vpc_subnetwork = module.networking.vpc_subnetwork
 }
