@@ -43,5 +43,5 @@ variable "master_ipv4_cidr" {
 variable "composer_image_version" {
   description = "Versión de la imagen de Cloud Composer"
   type        = string
-  default     = "composer-2-airflow-2.5.1"
+  default     = "composer-2.16.7-airflow-2.10.5"
 }
