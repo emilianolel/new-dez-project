@@ -159,3 +159,9 @@ Consulta [`terraform/README.md`](./terraform/README.md) para:
 - **Estado remoto cifrado** en GCS con versioning habilitado
 - **Entornos aislados**: dev y prod tienen estados independientes, ningún cambio en uno afecta al otro
 - **Principio de mínimo privilegio**: cada servicio tiene su propia Service Account con solo los roles necesarios
+
+---
+
+## 📄 Licencia
+
+Este proyecto está bajo la [Licencia MIT](./LICENSE). Siéntete libre de usarlo, modificarlo y compartirlo.
