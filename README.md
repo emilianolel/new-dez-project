@@ -85,6 +85,7 @@ Esto significa que **ningún developer necesita roles de administrador** directa
 Sigue estos pasos para desplegar esta misma arquitectura en tu propia cuenta de GCP:
 
 ### 1. Preparación Local
+Consulta los [Requerimientos Generales](./requirements.md) para verificar que tienes todo lo necesario (Terraform, gcloud, permisos).
 Asegúrate de tener instalados [Terraform](https://developer.hashicorp.com/terraform/downloads) (≥ 1.5) y el [Google Cloud CLI](https://cloud.google.com/sdk/docs/install).
 
 ```bash
