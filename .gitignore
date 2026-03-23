@@ -36,6 +36,7 @@ credentials.json
 *-key.json
 
 # Variables con secretos locales
+terraform.tfvars
 *.auto.tfvars
 secrets.tfvars
 local.tfvars

@@ -67,7 +67,30 @@ gcloud auth application-default login
 gcloud config set project YOUR_GCP_PROJECT_ID
 ```
 
-### 1. Crear el bucket de estado de Terraform (una sola vez)
+### 1. Configuración de Variables (.tfvars)
+
+El repositorio no incluye tus configuraciones reales por seguridad. Debes crear tus archivos `terraform.tfvars` a partir de los ejemplos:
+
+```bash
+# Global
+cp terraform/global/terraform.tfvars.example terraform/global/terraform.tfvars
+
+# Entornos
+cp terraform/environments/dev/terraform.tfvars.example terraform/environments/dev/terraform.tfvars
+cp terraform/environments/prod/terraform.tfvars.example terraform/environments/prod/terraform.tfvars
+```
+
+Edita los archivos generados y coloca tu `project_id`, `region` y `email`.
+
+### 2. Inicialización Automática (Bootstrap)
+
+Usa el script `init.sh` para crear el bucket de estado y configurar la Service Account de administración:
+
+```bash
+bash terraform/scripts/init.sh PROJECT_ID STATE_BUCKET REGION OPERATOR_EMAIL
+```
+
+### 3. Crear el bucket de estado de Terraform (una sola vez)
 
 El estado de Terraform se almacena remotamente en GCS. Debes crear el bucket **antes** de inicializar Terraform.
 
@@ -86,7 +109,7 @@ backend "gcs" {
 }
 ```
 
-### 2. Habilitar APIs del proyecto (una sola vez)
+### 4. Habilitar APIs del proyecto (una sola vez)
 
 El directorio `global/` habilita las APIs de GCP requeridas. Se aplica **una sola vez** y es independiente de los entornos.
 

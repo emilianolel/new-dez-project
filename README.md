@@ -80,44 +80,62 @@ Esto significa que **ningún developer necesita roles de administrador** directa
 
 ---
 
-## 🚀 Inicio rápido
+## 🚀 Guía de Replicación (Paso a Paso)
 
-### 1. Pre-requisitos
+Sigue estos pasos para desplegar esta misma arquitectura en tu propia cuenta de GCP:
+
+### 1. Preparación Local
+Asegúrate de tener instalados [Terraform](https://developer.hashicorp.com/terraform/downloads) (≥ 1.5) y el [Google Cloud CLI](https://cloud.google.com/sdk/docs/install).
 
 ```bash
-terraform --version   # >= 1.5.0
-gcloud --version
 gcloud auth login
+gcloud auth application-default login
 ```
 
-### 2. Bootstrap (primera vez)
+### 2. Configuración de Variables
+El repositorio incluye archivos `.example`. Debes crear tus archivos de configuración real:
+
+```bash
+# Global
+cp terraform/global/terraform.tfvars.example terraform/global/terraform.tfvars
+
+# Entornos
+cp terraform/environments/dev/terraform.tfvars.example terraform/environments/dev/terraform.tfvars
+cp terraform/environments/prod/terraform.tfvars.example terraform/environments/prod/terraform.tfvars
+```
+
+**IMPORTANTE**: Edita los nuevos archivos `.tfvars` y sustituye `TU_PROYECTO_ID` y `TU_EMAIL` por tus datos reales.
+
+### 3. Inicialización Automática (Bootstrap)
+Ejecuta el script de inicio para configurar la Service Account maestra y el almacenamiento del estado:
 
 ```bash
 bash terraform/scripts/init.sh \
-  MY_GCP_PROJECT_ID \
-  MY_TF_STATE_BUCKET \
+  EL_ID_DE_TU_PROYECTO \
+  un-nombre-unico-para-tu-bucket-state \
   us-central1 \
-  tu@email.com
+  tu-email@dominio.com
 ```
 
-Este comando hace todo automáticamente:
-- Crea el bucket GCS para el estado de Terraform
-- Crea la SA `terraform-admin` con los permisos necesarios
-- Activa la impersonación en los providers
-
-### 3. Desplegar infraestructura
+### 4. Despliegue de Infraestructura
+Una vez inicializado, despliega en este orden:
 
 ```bash
-# Solo dev
-cd terraform/environments/dev && terraform init && terraform apply
+# 1. APIs y Permisos Globales
+cd terraform/global && terraform init && terraform apply
 
-# Solo prod
-cd terraform/environments/prod && terraform init && terraform apply
+# 2. Entorno de Desarrollo
+cd ../environments/dev && terraform init && terraform apply
 
-# Ambos en paralelo
-(cd terraform/environments/dev  && terraform apply -auto-approve) &
-(cd terraform/environments/prod && terraform apply -auto-approve) &
-wait
+# 3. Entorno de Producción (Opcional)
+cd ../prod && terraform init && terraform apply
+```
+
+### 5. Verificación
+Usa los scripts de diagnóstico incluidos:
+```bash
+bash terraform/scripts/audit.sh  # Lista tus recursos activos
+bash terraform/scripts/costs.sh  # Muestra el gasto estimado (USD)
 ```
 
 ---
