@@ -95,7 +95,7 @@ gcloud auth login
 ```bash
 bash terraform/scripts/init.sh \
   MY_GCP_PROJECT_ID \
-  my-tf-state-bucket \
+  MY_TF_STATE_BUCKET \
   us-central1 \
   tu@email.com
 ```
