@@ -12,9 +12,12 @@ echo "----------------------------------------------------------"
 # Detector de Sistema Operativo
 OS_TYPE="$(uname -s)"
 case "${OS_TYPE}" in
-    Darwin*)  OS="mac" ;;
-    Linux*)   OS="linux" ;;
-    *)        echo "❌ OS no soportado automáticamente. Por favor instala Terraform y gcloud manualmente."; exit 1 ;;
+Darwin*) OS="mac" ;;
+Linux*) OS="linux" ;;
+*)
+    echo "❌ OS no soportado automáticamente. Por favor instala Terraform y gcloud manualmente."
+    exit 1
+    ;;
 esac
 
 install_terraform() {
@@ -24,7 +27,7 @@ install_terraform() {
         brew install hashicorp/tap/terraform
     else
         sudo apt-get update && sudo apt-get install -y gnupg software-properties-common
-        wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg > /dev/null
+        wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg >/dev/null
         echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
         sudo apt-get update && sudo apt-get install terraform
     fi
@@ -42,7 +45,7 @@ install_gcloud() {
 }
 
 # 1. Verificar Terraform
-if ! command -v terraform &> /dev/null; then
+if ! command -v terraform &>/dev/null; then
     echo "⚠️  Terraform NO encontrado."
     install_terraform
 else
@@ -50,7 +53,7 @@ else
 fi
 
 # 2. Verificar gcloud
-if ! command -v gcloud &> /dev/null; then
+if ! command -v gcloud &>/dev/null; then
     echo "⚠️  gcloud SDK NO encontrado."
     install_gcloud
 else
