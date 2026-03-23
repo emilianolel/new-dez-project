@@ -2,6 +2,8 @@
 
 Proyecto de **ingeniería de datos en Google Cloud Platform**, gestionado como infraestructura como código (IaC) con **Terraform**. Define, versiona y despliega todos los servicios GCP necesarios para pipelines de datos end-to-end, con separación de entornos y gestión segura de accesos mediante Service Accounts.
 
+![GCP Audit Script Preview](./assets/gcp_audit_terminal_preview.png)
+
 ---
 
 ## 🌐 Arquitectura general
