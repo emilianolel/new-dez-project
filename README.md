@@ -45,6 +45,7 @@ Proyecto de **ingeniería de datos en Google Cloud Platform**, gestionado como i
     │   └── networking/         ← VPC, subnets, firewall
     └── scripts/
         ├── init.sh             ← Bootstrap automatizado (primera vez)
+        ├── sync-project.sh     ← Sincronización de IDs (mantenimiento)
         ├── destroy.sh          ← Destrucción de infraestructura
         ├── audit.sh            ← Auditoría de recursos activos
         └── costs.sh            ← Reporte de gastos en USD
@@ -134,7 +135,18 @@ cd ../environments/dev && terraform init && terraform apply
 cd ../prod && terraform init && terraform apply
 ```
 
-### 5. Verificación
+### 5. Mantenimiento y Sincronización
+Si necesitas cambiar el ID del proyecto, la región o el bucket de estado globalmente, usa el script de sincronización:
+
+```bash
+bash terraform/scripts/sync-project.sh \
+  NUEVO_PROJECT_ID \
+  NUEVO_BUCKET_NAME \
+  NUEVA_REGION \
+  TU_EMAIL
+```
+
+### 6. Verificación
 Usa los scripts de diagnóstico incluidos:
 ```bash
 bash terraform/scripts/audit.sh  # Lista tus recursos activos
