@@ -49,3 +49,28 @@ resource "google_storage_bucket" "curated" {
     layer = "curated"
   }
 }
+resource "google_storage_bucket" "dataproc_config" {
+  name                        = "${local.bucket_prefix}-dataproc-config"
+  location                    = var.region
+  project                     = var.project_id
+  uniform_bucket_level_access = true
+  force_destroy               = var.env == "dev" ? true : false
+
+  labels = {
+    env  = var.env
+    type = "dataproc-config"
+  }
+}
+
+resource "google_storage_bucket" "dataproc_temp" {
+  name                        = "${local.bucket_prefix}-dataproc-temp"
+  location                    = var.region
+  project                     = var.project_id
+  uniform_bucket_level_access = true
+  force_destroy               = var.env == "dev" ? true : false
+
+  labels = {
+    env  = var.env
+    type = "dataproc-temp"
+  }
+}

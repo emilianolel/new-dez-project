@@ -13,18 +13,16 @@ variable "gcp_service_apis" {
   description = "Lista de APIs de GCP a habilitar"
   type        = list(string)
   default = [
-    "bigquery.googleapis.com",
-    "storage.googleapis.com",
-    "dataflow.googleapis.com",
-    "pubsub.googleapis.com",
-    "composer.googleapis.com",
-    "cloudfunctions.googleapis.com",
-    "artifactregistry.googleapis.com",
-    "secretmanager.googleapis.com",
-    "iam.googleapis.com",
     "compute.googleapis.com",
+    "storage.googleapis.com",
+    "bigquery.googleapis.com",
+    "dataproc.googleapis.com",
+    "iam.googleapis.com",
     "cloudresourcemanager.googleapis.com",
     "iamcredentials.googleapis.com",
+    "serviceusage.googleapis.com",
+    "cloudbilling.googleapis.com",
+    "billingbudgets.googleapis.com",
   ]
 }
 

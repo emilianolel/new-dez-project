@@ -4,20 +4,17 @@
 ###############################################################################
 
 module "networking" {
-  source     = "../../modules/networking"
-  project_id = var.project_id
-  region     = var.region
-  env        = var.env
+  source        = "../../modules/networking"
+  project_id    = var.project_id
+  region        = var.region
+  env           = var.env
+  subnet_cidr   = var.subnet_cidr
+  pods_cidr     = var.pods_cidr
+  services_cidr = var.services_cidr
 }
 
 module "iam" {
   source     = "../../modules/iam"
-  project_id = var.project_id
-  env        = var.env
-}
-
-module "secret_manager" {
-  source     = "../../modules/secret_manager"
   project_id = var.project_id
   env        = var.env
 }
@@ -36,38 +33,22 @@ module "bigquery" {
   env        = var.env
 }
 
-module "pubsub" {
-  source     = "../../modules/pubsub"
-  project_id = var.project_id
-  env        = var.env
-}
-
-module "artifact_registry" {
-  source     = "../../modules/artifact_registry"
-  project_id = var.project_id
-  region     = var.region
-  env        = var.env
-}
-
-module "cloud_functions" {
-  source     = "../../modules/cloud_functions"
-  project_id = var.project_id
-  region     = var.region
-  env        = var.env
-}
-
-module "dataflow" {
-  source     = "../../modules/dataflow"
-  project_id = var.project_id
-  region     = var.region
-  env        = var.env
-}
-
-module "composer" {
-  source         = "../../modules/composer"
+module "compute" {
+  source         = "../../modules/compute"
   project_id     = var.project_id
   region         = var.region
   env            = var.env
   vpc_network    = module.networking.vpc_network
   vpc_subnetwork = module.networking.vpc_subnetwork
+}
+
+module "dataproc" {
+  source          = "../../modules/dataproc"
+  project_id      = var.project_id
+  region          = var.region
+  env             = var.env
+  vpc_subnetwork  = module.networking.vpc_subnetwork
+  service_account = module.iam.dataproc_worker_email
+  config_bucket   = module.gcs.dataproc_config_bucket
+  temp_bucket     = module.gcs.dataproc_temp_bucket
 }

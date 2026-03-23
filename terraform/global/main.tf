@@ -45,21 +45,16 @@ resource "google_service_account" "terraform_admin" {
   project      = local.project_id
 }
 
-# Roles necesarios para que la SA pueda gestionar todos los servicios del proyecto
+# Roles necesarios para que la SA pueda gestionar los servicios simplificados
 locals {
   terraform_admin_roles = [
     "roles/bigquery.admin",
     "roles/storage.admin",
-    "roles/dataflow.admin",
-    "roles/pubsub.admin",
-    "roles/composer.admin",
-    "roles/cloudfunctions.admin",
-    "roles/artifactregistry.admin",
+    "roles/dataproc.admin",
+    "roles/compute.admin",
     "roles/iam.serviceAccountAdmin",
     "roles/iam.serviceAccountTokenCreator",
     "roles/iam.serviceAccountUser",
-    "roles/compute.admin",
-    "roles/secretmanager.admin",
     "roles/serviceusage.serviceUsageAdmin",
     "roles/resourcemanager.projectIamAdmin",
     "roles/iam.securityAdmin",

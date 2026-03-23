@@ -10,15 +10,13 @@ Proyecto de **ingeniería de datos en Google Cloud Platform**, gestionado como i
                          ┌────────────────────────────────────────┐
                          │         Google Cloud Platform          │
                          │                                        │
-  Fuentes externas       │  Pub/Sub ──► Dataflow ──► BigQuery     │
-  ───────────────► (API) │    │                         │         │
-                         │    ▼                         ▼         │
-                         │   GCS (raw / staging / curated)        │
-                         │    │                                    │
-                         │    ▼                                    │
-                         │  Cloud Composer (Airflow) ─────────────┤
-                         │            │                           │
-                         │  Cloud Functions (triggers)            │
+  Fuentes externas       │  GCS (raw / staging / curated) ──────┐ │
+  ───────────────► (API) │    │                         │       │ │
+                         │    ▼                         ▼       │ │
+                         │  Dataproc (Spark/Hadoop) ──► BigQuery │ │
+                         │    │                                 │ │
+                         │    ▼                                 ▼ │
+                         │  Compute Engine (Ubuntu LTS Management VM) │
                          └────────────────────────────────────────┘
 ```
 
@@ -39,17 +37,15 @@ Proyecto de **ingeniería de datos en Google Cloud Platform**, gestionado como i
     ├── modules/                ← Módulos reutilizables por servicio GCP
     │   ├── gcs/                ← Data Lake (raw, staging, curated)
     │   ├── bigquery/           ← Data Warehouse (datasets por capa)
-    │   ├── pubsub/             ← Ingesta de datos en streaming
-    │   ├── dataflow/           ← Procesamiento batch y streaming
-    │   ├── composer/           ← Orquestación (Apache Airflow)
-    │   ├── cloud_functions/    ← Triggers serverless
-    │   ├── artifact_registry/  ← Repositorio de imágenes Docker
+    │   ├── dataproc/           ← Procesamiento Spark/Hadoop
+    │   ├── compute/            ← Instancia de gestión Ubuntu LTS
     │   ├── iam/                ← Service Accounts y permisos
-    │   ├── networking/         ← VPC, subnets, firewall
-    │   └── secret_manager/     ← Credenciales y secretos
+    │   └── networking/         ← VPC, subnets, firewall
     └── scripts/
         ├── init.sh             ← Bootstrap automatizado (primera vez)
-        └── destroy.sh          ← Destrucción de infraestructura
+        ├── destroy.sh          ← Destrucción de infraestructura
+        ├── audit.sh            ← Auditoría de recursos activos
+        └── costs.sh            ← Reporte de gastos en USD
 ```
 
 ---
@@ -62,13 +58,10 @@ Proyecto de **ingeniería de datos en Google Cloud Platform**, gestionado como i
 | **Cloud** | Google Cloud Platform |
 | **Data Lake** | Cloud Storage (GCS) |
 | **Data Warehouse** | BigQuery |
-| **Streaming** | Pub/Sub |
-| **Procesamiento** | Dataflow (Apache Beam) |
-| **Orquestación** | Cloud Composer (Apache Airflow) |
-| **Serverless** | Cloud Functions |
-| **Imágenes** | Artifact Registry |
-| **Seguridad** | Secret Manager + IAM |
-| **Red** | VPC privada |
+| **Procesamiento** | Dataproc (Spark/Hadoop) |
+| **Gestión/VPC** | Compute Engine (Ubuntu) |
+| **Seguridad** | IAM (Service Accounts) |
+| **Red** | VPC personalizada con Cloud NAT |
 
 ---
 

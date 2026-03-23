@@ -1,7 +1,6 @@
 subnet_cidr         = "10.0.0.0/24"
 pods_cidr           = "10.1.0.0/21"
 services_cidr       = "10.2.0.0/24"
-composer_master_cidr = "172.16.0.0/28"
 project_id         = "new-dez-project"
 region             = "us-central1"
 env                = "dev"

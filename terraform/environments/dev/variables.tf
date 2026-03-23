@@ -18,11 +18,6 @@ variable "services_cidr" {
   type        = string
 }
 
-variable "composer_master_cidr" {
-  description = "Rango de IP para el plano de control de Composer"
-  type        = string
-}
-
 variable "region" {
   description = "Región principal de GCP"
   type        = string

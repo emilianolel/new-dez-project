@@ -19,12 +19,6 @@ module "iam" {
   env        = var.env
 }
 
-module "secret_manager" {
-  source     = "../../modules/secret_manager"
-  project_id = var.project_id
-  env        = var.env
-}
-
 module "gcs" {
   source     = "../../modules/gcs"
   project_id = var.project_id
@@ -39,39 +33,22 @@ module "bigquery" {
   env        = var.env
 }
 
-module "pubsub" {
-  source     = "../../modules/pubsub"
-  project_id = var.project_id
-  env        = var.env
+module "compute" {
+  source         = "../../modules/compute"
+  project_id     = var.project_id
+  region         = var.region
+  env            = var.env
+  vpc_network    = module.networking.vpc_network
+  vpc_subnetwork = module.networking.vpc_subnetwork
 }
 
-module "artifact_registry" {
-  source     = "../../modules/artifact_registry"
-  project_id = var.project_id
-  region     = var.region
-  env        = var.env
-}
-
-module "cloud_functions" {
-  source     = "../../modules/cloud_functions"
-  project_id = var.project_id
-  region     = var.region
-  env        = var.env
-}
-
-module "dataflow" {
-  source     = "../../modules/dataflow"
-  project_id = var.project_id
-  region     = var.region
-  env        = var.env
-}
-
-module "composer" {
-  source           = "../../modules/composer"
-  project_id       = var.project_id
-  region           = var.region
-  env              = var.env
-  vpc_network      = module.networking.vpc_network
-  vpc_subnetwork   = module.networking.vpc_subnetwork
-  master_ipv4_cidr = var.composer_master_cidr
+module "dataproc" {
+  source          = "../../modules/dataproc"
+  project_id      = var.project_id
+  region          = var.region
+  env             = var.env
+  vpc_subnetwork  = module.networking.vpc_subnetwork
+  service_account = module.iam.dataproc_worker_email
+  config_bucket   = module.gcs.dataproc_config_bucket
+  temp_bucket     = module.gcs.dataproc_temp_bucket
 }

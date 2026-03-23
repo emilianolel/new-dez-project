@@ -14,6 +14,21 @@ variable "env" {
   type        = string
 }
 
+variable "subnet_cidr" {
+  description = "Rango de IP para la subred principal"
+  type        = string
+}
+
+variable "pods_cidr" {
+  description = "Rango de IP secundario para los Pods de GKE/Dataproc"
+  type        = string
+}
+
+variable "services_cidr" {
+  description = "Rango de IP secundario para los Servicios de GKE/Dataproc"
+  type        = string
+}
+
 variable "terraform_admin_sa" {
   description = "Email de la SA terraform-admin usada para impersonación. Ejemplo: terraform-admin@PROJECT_ID.iam.gserviceaccount.com"
   type        = string

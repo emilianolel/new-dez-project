@@ -28,4 +28,11 @@ fi
 echo "🗑️  Destruyendo entorno: ${ENV}"
 cd "$ENV_DIR"
 terraform destroy -auto-approve
-echo "✅ Entorno ${ENV} destruido."
+
+echo "🧹 Limpiando buckets residuales de Dataproc..."
+# Busca y elimina buckets que GCP crea automáticamente fuera de Terraform
+# Estos suelen llamarse dataproc-staging-<region>-<project_number>-*
+# y dataproc-temp-<region>-<project_number>-*
+gcloud storage buckets list --format="value(name)" | grep -E "^dataproc-(staging|temp)-" | xargs -I {} gcloud storage rm --recursive gs://{} || echo "   ℹ️ No se encontraron buckets residuales para limpiar."
+
+echo "✅ Entorno ${ENV} destruido y limpiado."

@@ -21,14 +21,10 @@ terraform/
 ├── modules/               # Módulos reutilizables por servicio GCP
 │   ├── gcs/               # Data Lake (raw, staging, curated)
 │   ├── bigquery/          # Datasets por capa de datos
-│   ├── pubsub/            # Ingesta streaming (topics + subscriptions)
-│   ├── dataflow/          # Procesamiento batch/streaming
-│   ├── composer/          # Orquestación con Apache Airflow
-│   ├── cloud_functions/   # Triggers serverless
-│   ├── artifact_registry/ # Repositorio de imágenes Docker
+│   ├── dataproc/          # Procesamiento Spark/Hadoop
+│   ├── compute/           # Gestión con VM Ubuntu LTS
 │   ├── iam/               # Service Accounts y permisos
-│   ├── networking/        # VPC, subnets, firewall
-│   └── secret_manager/    # Gestión de secretos
+│   └── networking/        # VPC, subnets, firewall
 │
 ├── global/                # APIs del proyecto (aplicar una sola vez)
 │   ├── backend.tf
@@ -50,14 +46,10 @@ terraform/
 |---|---|---|
 | `gcs` | Cloud Storage | Data Lake: buckets `raw`, `staging`, `curated` |
 | `bigquery` | BigQuery | Data Warehouse: datasets por capa |
-| `pubsub` | Pub/Sub | Ingesta de datos en tiempo real |
-| `dataflow` | Dataflow | Procesamiento batch y streaming |
-| `composer` | Cloud Composer | Orquestación de pipelines (Apache Airflow) |
-| `cloud_functions` | Cloud Functions | Triggers y funciones serverless |
-| `artifact_registry` | Artifact Registry | Imágenes Docker de pipelines |
+| `dataproc` | Dataproc | Procesamiento escalable (Spark/Hadoop) |
+| `compute` | Compute Engine | Instancia de gestión Ubuntu con IP estática |
 | `iam` | IAM | Service Accounts y bindings de permisos |
-| `networking` | VPC / Compute | Red privada, subnets, firewall |
-| `secret_manager` | Secret Manager | Gestión de credenciales y secretos |
+| `networking` | VPC / Compute | Red privada, subnets, firewall, NAT |
 
 ---
 
@@ -280,3 +272,34 @@ prod_analytics           ← Dataset BigQuery analytics de prod
 ```
 
 Esto garantiza que ambos entornos coexistan en el mismo proyecto GCP sin conflictos de nombres.
+---
+
+## 🔐 Gestión de accesos — Impersonación (SA Impersonation)
+
+Este proyecto no utiliza archivos de llaves JSON (`key.json`). En su lugar, utiliza **impersonación de Service Account** para mayor seguridad.
+
+### ¿Cómo funciona?
+
+Cuando ejecutas Terraform, tu cuenta personal de Google Cloud (con la que hiciste `gcloud auth login`) solicita un token temporal para actuar en nombre de la Service Account `terraform-admin`.
+
+```text
+  ┌──────────────────┐          ┌─────────────────────────┐          ┌───────────────────────┐
+  │  Tu Cuenta GCP   │  ──────► │   Google IAM Service    │  ──────► │ SA "terraform-admin"  │
+  │ (Email Personal) │  solicita│  (Token Service Agent)  │  otorga  │    (Rol: Editor/Owner)│
+  └──────────────────┘  token   └─────────────────────────┘  acceso  └───────────┬───────────┘
+                                                                                 │
+                                                                                 ▼
+                                                                     ┌───────────────────────┐
+                                                                     │   Recursos de GCP     │
+                                                                     │ (GCS, BQ, Dataproc...)│
+                                                                     └───────────────────────┘
+```
+
+### Configuración requerida:
+
+1.  **Permisos IAM**: Tu email debe estar en la variable `terraform_operators` en `terraform/global/terraform.tfvars`. Esto te otorga el rol `roles/iam.serviceAccountTokenCreator` sobre la SA.
+2.  **Provider**: Terraform está configurado en cada `backend.tf` para usar la directiva `impersonate_service_account`.
+3.  **Local**: Debes tener las credenciales de aplicación configuradas en tu máquina:
+    ```bash
+    gcloud auth application-default login
+    ```

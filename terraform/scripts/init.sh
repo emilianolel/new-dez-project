@@ -73,9 +73,14 @@ for BACKEND_FILE in \
   "${TERRAFORM_DIR}/global/backend.tf" \
   "${TERRAFORM_DIR}/environments/dev/backend.tf" \
   "${TERRAFORM_DIR}/environments/prod/backend.tf"; do
-  sed -i.bak "s|REPLACE_WITH_YOUR_TERRAFORM_STATE_BUCKET|${STATE_BUCKET}|g" "${BACKEND_FILE}"
-  rm -f "${BACKEND_FILE}.bak"
-  echo "   ✅ $(basename $(dirname ${BACKEND_FILE}))/backend.tf"
+  
+  if grep -q "REPLACE_WITH_YOUR_TERRAFORM_STATE_BUCKET" "${BACKEND_FILE}"; then
+    sed -i.bak "s\|REPLACE_WITH_YOUR_TERRAFORM_STATE_BUCKET\|${STATE_BUCKET}\|g" "${BACKEND_FILE}"
+    rm -f "${BACKEND_FILE}.bak"
+    echo "   ✅ $(basename $(dirname ${BACKEND_FILE}))/backend.tf actualizado."
+  else
+    echo "   ℹ️  $(basename $(dirname ${BACKEND_FILE}))/backend.tf ya parece estar configurado."
+  fi
 done
 
 # ── PASO 4: Actualizar terraform.tfvars ──────────────────────────────────────
@@ -85,9 +90,14 @@ for TFVARS_FILE in \
   "${TERRAFORM_DIR}/global/terraform.tfvars" \
   "${TERRAFORM_DIR}/environments/dev/terraform.tfvars" \
   "${TERRAFORM_DIR}/environments/prod/terraform.tfvars"; do
-  sed -i.bak "s|YOUR_GCP_PROJECT_ID|${PROJECT_ID}|g" "${TFVARS_FILE}"
-  rm -f "${TFVARS_FILE}.bak"
-  echo "   ✅ $(basename $(dirname ${TFVARS_FILE}))/terraform.tfvars"
+  
+  if grep -q "YOUR_GCP_PROJECT_ID" "${TFVARS_FILE}"; then
+    sed -i.bak "s\|YOUR_GCP_PROJECT_ID\|${PROJECT_ID}\|g" "${TFVARS_FILE}"
+    rm -f "${TFVARS_FILE}.bak"
+    echo "   ✅ $(basename $(dirname ${TFVARS_FILE}))/terraform.tfvars actualizado."
+  else
+    echo "   ℹ️  $(basename $(dirname ${TFVARS_FILE}))/terraform.tfvars ya tiene un PROJECT_ID configurado."
+  fi
 done
 
 if [[ -n "${OPERATOR_EMAIL}" ]]; then
