@@ -72,3 +72,18 @@ resource "google_compute_router_nat" "nat" {
     filter = "ERRORS_ONLY"
   }
 }
+
+# Regla para permitir SSH a través de IAP (Cloud Identity-Aware Proxy)
+resource "google_compute_firewall" "allow_ssh_iap" {
+  name    = "${var.env}-allow-ssh-iap"
+  project = var.project_id
+  network = google_compute_network.vpc.name
+
+  allow {
+    protocol = "tcp"
+    ports    = ["22"]
+  }
+
+  source_ranges = ["35.235.240.0/20"]
+  description   = "Permite acceso SSH desde el túnel IAP de Google"
+}
